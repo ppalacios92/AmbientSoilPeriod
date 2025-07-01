@@ -36,7 +36,7 @@ def plot_spectrum(mfx, mfs, mfp, peak_spacing_hz=0.5):
 
     peaks, _ = find_peaks(mfp, distance=peak_spacing_samples)
     sorted_peaks = peaks[np.argsort(mfp[peaks])[::-1]]
-    top_peaks = sorted_peaks[:4]
+    top_peaks = sorted_peaks[:2]
 
     for idx in top_peaks:
         f = mfx1d[idx]

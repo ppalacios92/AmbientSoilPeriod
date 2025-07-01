@@ -1,5 +1,5 @@
 import numpy as np
-
+import pandas as pd
 
 from ambientperiod.preprocessing.load_utils import load_utils
 
@@ -36,7 +36,15 @@ class BuildPeriod:
         print('-'*50)
         print('INICIALIZATION')
         print('-'*50)
-        self.load_signal()     
+
+
+        
+        if isinstance(signal_path, (np.ndarray, pd.Series, list)):
+            self.signal = np.array(signal_path).flatten()
+            print('Signal provided directly as array.')
+        else:
+            self.load_signal()
+
 
 
         self.algorithm_sta_lta()
