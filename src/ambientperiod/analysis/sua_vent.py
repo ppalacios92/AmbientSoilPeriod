@@ -10,6 +10,7 @@ def _sua_vent(mfx, mfz, bexp):
     for j in range(nn):
         y = mfz[:, j]
         f = mfx[:, j]
+
         nx = len(f)
         dx = f[1] - f[0]
         fratio = 10 ** (2.5 / bexp)
@@ -43,18 +44,20 @@ def _sua_vent(mfx, mfz, bexp):
 
     return mfs
 
-
 def sua_vent(mfx, mfz, bexp):
     """
-    Aplica el suavizado Konno-Ohmachi a mfz y genera un ejemplo ilustrativo.
-
-    Retorna el espectro suavizado mfs.
+    Aplica el suavizado Konno-Ohmachi a un espectro por ventanas.
+    - Si `mfx` es un vector 1D, lo replica automáticamente por columnas.
+    - Retorna el espectro suavizado `mfs`.
     """
-    mfs = _sua_vent(mfx, mfz, bexp)
+    if mfx.ndim == 1:
+        mfx = np.tile(mfx[:, None], mfz.shape[1])
+    return _sua_vent(mfx, mfz, bexp)
 
-    # ===============================
-    # Ejemplo ilustrativo automático
-    # ===============================
+# ------------------------------------------------------------
+# (Opcional) Ilustración automática para verificar suavizado
+# ------------------------------------------------------------
+def show_smoothing_example():
     f = np.linspace(0.14, 0.32, 1000)
     signal = 3 + 1.5 * np.cos(40 * np.pi * f)
 
@@ -75,10 +78,9 @@ def sua_vent(mfx, mfz, bexp):
         smoothed_spectra.append(smoothed)
 
     plt.figure(figsize=(10, 3))
-    plt.plot(f, signal, label='Signal', linewidth=2)
+    plt.plot(f, signal, label='Original Signal', linewidth=2)
     for R, smoothed in zip(R_values, smoothed_spectra):
         plt.plot(f, smoothed, label=f'R={R}')
-
     plt.xlabel('Frequency [Hz]', fontweight='bold')
     plt.ylabel('Amplitude', fontweight='bold')
     plt.title('Konno-Ohmachi Smoothing Example', fontweight='bold')
@@ -86,5 +88,3 @@ def sua_vent(mfx, mfz, bexp):
     plt.legend()
     plt.tight_layout()
     plt.show()
-
-    return mfs

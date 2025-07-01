@@ -24,7 +24,7 @@ from ambientperiod.tools.plot_peak_kde import plot_peak_kde
 
 
 class BuildPeriod:
-    def __init__(self, signal_path, config):
+    def __init__(self, signal_path, config , display_figures=False):
         self.signal_path = signal_path
         self.config = config
         self.signal = None
@@ -32,35 +32,34 @@ class BuildPeriod:
         self.spectra = []
         self.periods = []
         self.mean_spectrum = None
+        self.display_figures=display_figures
+        print('-'*50)
+        print('INICIALIZATION')
+        print('-'*50)
+        self.load_signal()     
 
 
-
-
-        self.load_signal()
-        
         self.algorithm_sta_lta()
-        self.window_selector()
-        self.plot_selected_windows()
+        if self.display_figures:
+            self.plot_sta_lta()    
+
+        self.window_selector()     
+        
+        if self.display_figures:
+            self.plot_selected_windows()
 
         self.taper_function()
-        self.plot_tapper()
-
+        if self.display_figures:
+            self.plot_tapper()
 
         self.compute_fft()
-
         self.sua_vent()
         self.prom_vent()
 
         self.plot_spectrum()
-        self.plot_peak_kde()
+        self.plot_peak_kde()                 
 
-
-
-
-
-
-
-
+            
 
     def load_signal(self):
         self.signal = load_utils(self.signal_path)
@@ -77,8 +76,7 @@ class BuildPeriod:
         self.sta = sta_vals
         self.lta = lta_vals
         print('algorithm_sta_lta OK...')
-        self.plot_sta_lta()
-        print('plot_sta_lta OK...')
+        
 
     def window_selector(self):
         fs = self.config["Fs"]
@@ -140,6 +138,7 @@ class BuildPeriod:
         vent = self.config["vent"]
 
         plot_sta_lta(self.signal,  self.sta,  self.lta, self.sta_lta,  fs,  vmin,  vmax,  vent  )
+        print('plot_sta_lta OK...')
 
     def plot_selected_windows(self):
         fs = self.config["Fs"]
