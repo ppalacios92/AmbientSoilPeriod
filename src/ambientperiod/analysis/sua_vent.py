@@ -1,26 +1,9 @@
-from numba import njit
 import numpy as np
+import matplotlib.pyplot as plt
+from numba import njit
 
 @njit
-def sua_vent(mfx, mfz, bexp):
-    """
-    Smooth the vertical spectrum mfz with Konno-Ohmachi style smoothing
-    using a manually implemented kernel (Numba-accelerated).
-
-    Parameters
-    ----------
-    mfx : ndarray (n_frequencies, n_windows)
-        Frequency values per window.
-    mfz : ndarray (n_frequencies, n_windows)
-        Spectrum values per window (e.g., Z-component).
-    bexp : float
-        Bandwidth exponent for smoothing.
-
-    Returns
-    -------
-    mfs : ndarray
-        Smoothed spectrum of same shape as mfz.
-    """
+def _sua_vent(mfx, mfz, bexp):
     mm, nn = mfz.shape
     mfs = np.zeros_like(mfz)
 
@@ -34,7 +17,7 @@ def sua_vent(mfx, mfz, bexp):
         for ix in range(nx):
             fc = f[ix]
             if fc <= 0:
-                continue  # skip invalid frequency
+                continue
 
             ix1 = max(int(fc / fratio / dx), 1)
             ix2 = min(int(fc * fratio / dx + 1), nx - 1)
@@ -57,5 +40,51 @@ def sua_vent(mfx, mfz, bexp):
                 a2 += c
 
             mfs[ix, j] = a1 / a2 if a2 != 0 else 0.0
+
+    return mfs
+
+
+def sua_vent(mfx, mfz, bexp):
+    """
+    Aplica el suavizado Konno-Ohmachi a mfz y genera un ejemplo ilustrativo.
+
+    Retorna el espectro suavizado mfs.
+    """
+    mfs = _sua_vent(mfx, mfz, bexp)
+
+    # ===============================
+    # Ejemplo ilustrativo automático
+    # ===============================
+    f = np.linspace(0.14, 0.32, 1000)
+    signal = 3 + 1.5 * np.cos(40 * np.pi * f)
+
+    R_values = [20, 40, 60, 80, 100]
+    smoothed_spectra = []
+
+    for R in R_values:
+        smoothed = np.zeros_like(f)
+        for i, fc in enumerate(f):
+            x = np.log10(f / fc)
+            with np.errstate(divide='ignore', invalid='ignore'):
+                w = np.where(
+                    x == 0,
+                    1.0,
+                    (np.sin(R * x) / (R * x))**4
+                )
+            smoothed[i] = np.sum(w * signal) / np.sum(w)
+        smoothed_spectra.append(smoothed)
+
+    plt.figure(figsize=(10, 3))
+    plt.plot(f, signal, label='Signal', linewidth=2)
+    for R, smoothed in zip(R_values, smoothed_spectra):
+        plt.plot(f, smoothed, label=f'R={R}')
+
+    plt.xlabel('Frequency [Hz]', fontweight='bold')
+    plt.ylabel('Amplitude', fontweight='bold')
+    plt.title('Konno-Ohmachi Smoothing Example', fontweight='bold')
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
 
     return mfs

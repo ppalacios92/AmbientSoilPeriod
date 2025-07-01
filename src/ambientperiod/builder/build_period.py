@@ -19,7 +19,7 @@ from ambientperiod.tools.plot_windows_selected import plot_windows_selected
 from ambientperiod.tools.plot_tapper import plot_tapper
 from ambientperiod.tools.plot_spectrum import plot_spectrum
 
-from ambientperiod.tools.plot_peak_histogram import plot_peak_histogram
+from ambientperiod.tools.plot_peak_kde import plot_peak_kde
 
 
 
@@ -52,7 +52,7 @@ class BuildPeriod:
         self.prom_vent()
 
         self.plot_spectrum()
-        self.plot_peak_histogram()
+        self.plot_peak_kde()
 
 
 
@@ -162,9 +162,7 @@ class BuildPeriod:
 
         print('prom_vent OK...')
 
-    def plot_peak_histogram(self):
-        peak_spacing_hz = 0.2
-        plot_peak_histogram(self.mfx, self.mfs, peak_spacing_hz=peak_spacing_hz)
-
-        print('plot_peak_histogram OK...')
-
+    def plot_peak_kde(self):
+        ...
+        # plot_peak_kde(self.mfx, self.mfs, self.config["vent"], self.config["Fs"], bins=40)
+        # print('plot_peak_kde OK...')

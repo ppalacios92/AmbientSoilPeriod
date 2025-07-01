@@ -7,11 +7,7 @@ def plot_tapper(u, MV, MT, vent, T, V):
     x = np.linspace(0, 1, m)
     colors = plt.cm.hsv(np.linspace(0, 1, n))
 
-    plt.figure(figsize=(10, 7))
-    # plt.suptitle('Turkeywin', fontweight='bold', fontsize=11)
-
-    # --- Subplot 1: Tapper ---
-    plt.subplot(2, 1, 1)
+    plt.figure(figsize=(10, 3))
     plt.plot(x * m, u, linewidth=2)
     plt.title('Tapper', fontsize=11, fontweight='bold')
     # plt.xlabel('Time [sec]', fontsize=9, fontweight='bold')
@@ -21,7 +17,7 @@ def plot_tapper(u, MV, MT, vent, T, V):
     plt.grid(True)
 
     # --- Subplot 2: Signal with windows ---
-    plt.subplot(2, 1, 2)
+    plt.figure(figsize=(10, 3))
     plt.plot(T, V, color='black', label='Signal')
     minV, maxV = np.min(V), np.max(V)
 
