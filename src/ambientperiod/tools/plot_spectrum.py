@@ -28,10 +28,10 @@ def plot_spectrum(mfx, mfs, mfp, peak_spacing_hz=0.5, numer_peaks=2,
     peaks = [p for p in peaks if f[p] >= min_freq]
 
     # Ordenar picos por amplitud (descendente), tomar los más altos
-    top_peaks = sorted(peaks, key=lambda i: mfp[i], reverse=True)[:numer_peaks]
+    sorted_peaks = sorted(peaks, key=lambda i: mfp[i], reverse=True)[:20]
 
     # Orden final por frecuencia creciente
-    top_peaks = sorted(top_peaks, key=lambda i: f[i])
+    top_peaks = sorted(sorted_peaks[:numer_peaks], key=lambda i: f[i])
 
     # Dibujar picos
     pastel = ['mediumaquamarine', 'lightcoral', 'cornflowerblue', 'plum']

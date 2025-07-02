@@ -1,27 +1,30 @@
-# Select valid signal windows based on STA/LTA ratio
-
 import numpy as np
 
-def window_selector(signal, ratio, fs, vent, vmin, vmax):
-    n = len(signal)
-    n_points = int(fs * vent)
-    t = np.arange(n) / fs
+def window_selector(fs, T, V, R, vent, vmin, vmax):
 
-    windows_time = []
-    windows_signal = []
-    positions = []
+    np_samples = int(fs * vent)
+    end_index = len(T) - 2 * np_samples + 1
 
-    for start in range(0, n - 2 * n_points + 1, n_points):
-        segment = ratio[start:start + n_points]
+    MT = []
+    MV = []
+    pos_a = []
+    win_ids = []
+
+    for i, a in enumerate(range(0, end_index + 1, np_samples)):
+        segment = R[a:a + np_samples]
+        if segment.shape[0] < np_samples:
+            continue
         if np.all((segment > vmin) & (segment < vmax)):
-            t_window = t[start:start + n_points]
-            v_window = signal[start:start + n_points]
-            windows_time.append(t_window)
-            windows_signal.append(v_window)
-            positions.append(start)
+            t_window = T[a:a + np_samples]
+            v_window = V[a:a + np_samples]
+            MT.append(t_window)
+            MV.append(v_window)
+            pos_a.append(a)
+            win_ids.append(i)
 
-    MT = np.column_stack(windows_time) if windows_time else np.empty((n_points, 0))
-    MV = np.column_stack(windows_signal) if windows_signal else np.empty((n_points, 0))
-    pos_a = np.array(positions)
+    MT = np.column_stack(MT) if MT else np.empty((np_samples, 0))
+    MV = np.column_stack(MV) if MV else np.empty((np_samples, 0))
+    pos_a = np.array(pos_a)
+    win_ids = np.array(win_ids)
 
-    return MT, MV, pos_a
+    return MT, MV, pos_a, win_ids

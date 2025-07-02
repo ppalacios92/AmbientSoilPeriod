@@ -74,28 +74,47 @@ class BuildPeriod:
         print('load_signal OK...')
 
     def algorithm_sta_lta(self):
+        # Normaliza la señal
         v = (self.signal - np.mean(self.signal)) / np.std(self.signal)
-        v = v / np.max(np.abs(v))
+        v = v / np.max(np.abs(v))  # Normalización adicional
+
+        # Parámetros desde config
         fs = self.config["Fs"]
         sta = self.config["STA"]
         lta = self.config["LTA"]
+
+        # Cálculo del STA/LTA con algoritmo exacto
         sta_lta, sta_vals, lta_vals = algorithm_sta_lta(v, fs, sta, lta)
+
+        # Guardar resultados en el objeto
         self.sta_lta = sta_lta
         self.sta = sta_vals
         self.lta = lta_vals
+        self.signal_normalized = v  # Guarda la señal normalizada
+
         print('algorithm_sta_lta OK...')
         
 
     def window_selector(self):
         fs = self.config["Fs"]
+        n = len(self.signal)
+        self.time = np.arange(n) / fs
+
         vmin = self.config["vmin"]
         vmax = self.config["vmax"]
         vent = self.config["vent"]
 
-        MT, MV, pos_a = window_selector(self.signal, self.sta_lta, fs, vent,  vmin, vmax )
+        T = self.time         # Vector de tiempo asociado a la señal
+        V = self.signal       # Señal original (1D)
+        R = self.sta_lta      # Ratio STA/LTA
+
+        MT, MV, pos_a , win_ids = window_selector(fs, T, V, R, vent, vmin, vmax)
+
         self.windows_time = MT
         self.windows_signal = MV
         self.windows_pos = pos_a
+        self.win_ids = win_ids
+
         print('window_selector OK...')
 
 
