@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 
-def plot_spectrum(mfx, mfs, mfp, peak_spacing_hz=0.5, numer_peaks=2,
+def plot_spectrum(mfx, mfs, mfp, peak_spacing_hz=0.5, numer_peaks=4,
                   min_freq=0.0, xlim=None, ylim=None):
 
     f = mfx[:, 0] if mfx.ndim == 2 else mfx

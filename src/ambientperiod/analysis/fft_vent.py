@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.signal import butter, filtfilt, detrend
 
-def fft_vent(fs, ma, apply_filter=False, f1=1.0, f2=4.0):
+def fft_vent(fs, ma, apply_filter=False, f1=1.0, f2=25.0):
     n_samples, n_windows = ma.shape
     nfft = 2**15
     freqs = np.fft.fftfreq(nfft, d=1/fs)[:nfft // 2]

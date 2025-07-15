@@ -108,15 +108,21 @@ class BuildPeriod:
         V = self.signal       # Señal original (1D)
         R = self.sta_lta      # Ratio STA/LTA
 
-        MT, MV, pos_a , win_ids = window_selector(fs, T, V, R, vent, vmin, vmax)
 
-        self.windows_time = MT
-        self.windows_signal = MV
-        self.windows_pos = pos_a
-        self.win_ids = win_ids
+        if self.config["vent_seismic"]:
+            
+            self.windows_time   = self.time[:, np.newaxis]     # (n, 1)
+            self.windows_signal = self.signal[:, np.newaxis]   # (n, 1)
+            self.windows_pos    = np.array([0])                # empieza en 0
+            self.win_ids        = np.array([0])                # ID única
+        else:
+            MT, MV, pos_a , win_ids = window_selector(fs, T, V, R, vent, vmin, vmax)
+            self.windows_time = MT
+            self.windows_signal = MV
+            self.windows_pos = pos_a
+            self.win_ids = win_ids
 
         print('window_selector OK...')
-
 
     def taper_function(self):
         p = self.config["p"]
