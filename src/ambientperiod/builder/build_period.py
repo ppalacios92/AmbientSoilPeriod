@@ -132,10 +132,10 @@ class BuildPeriod:
     def compute_fft(self):
         fs = self.config["Fs"]
         apply_filter = self.config.get("apply_filter", "N")
-        f1 = self.config.get("f1", 1.0)
-        f2 = self.config.get("f2", 4.0)
+        f1 = self.config.get("f1", 0.1)
+        f2 = self.config.get("f2", 25.0)
 
-        mfx, mfy, mfz = fft_vent(fs, self.windows_signal, apply_filter, f1, f2)
+        mfx, mfy, mfz = fft_vent(fs, self.windows_signal_tapered, apply_filter, f1, f2)
         self.mfx = mfx
         self.mfy = mfy
         self.mfz = mfz
@@ -143,6 +143,7 @@ class BuildPeriod:
 
     def sua_vent(self):
         bexp = self.config["bexp"]
+        # self.mfs =self.mfz
         self.mfs = sua_vent(self.mfx, self.mfz, bexp)
         print('sua_vent OK...')
 

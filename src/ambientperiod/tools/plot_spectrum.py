@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 
@@ -28,10 +29,10 @@ def plot_spectrum(mfx, mfs, mfp, peak_spacing_hz=0.5, numer_peaks=4,
     peaks = [p for p in peaks if f[p] >= min_freq]
 
     # Ordenar picos por amplitud (descendente), tomar los más altos
-    sorted_peaks = sorted(peaks, key=lambda i: mfp[i], reverse=True)[:20]
+    top_peaks = sorted(peaks, key=lambda i: mfp[i], reverse=True)[:numer_peaks]
 
     # Orden final por frecuencia creciente
-    top_peaks = sorted(sorted_peaks[:numer_peaks], key=lambda i: f[i])
+    # top_peaks = sorted(sorted_peaks[:numer_peaks], key=lambda i: f[i])
 
     # Dibujar picos
     pastel = ['mediumaquamarine', 'lightcoral', 'cornflowerblue', 'plum']
@@ -60,3 +61,13 @@ def plot_spectrum(mfx, mfs, mfp, peak_spacing_hz=0.5, numer_peaks=4,
 
     plt.tight_layout()
     plt.show()
+
+    print("\n📊 Peaks")
+    df_peaks = pd.DataFrame({
+        'Peak #': [f'Peak {i+1}' for i in range(len(top_peaks))],
+        'Frequency [Hz]': [f[idx] for idx in top_peaks],
+        'Period [s]': [1.0 / f[idx] if f[idx] != 0 else 0.0 for idx in top_peaks],
+        'Amplitude': [mfp[idx] for idx in top_peaks]
+    })
+
+    print(df_peaks.to_string(index=False))

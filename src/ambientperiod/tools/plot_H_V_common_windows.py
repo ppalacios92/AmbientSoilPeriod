@@ -16,7 +16,7 @@ def plot_H_V_common_windows(builders, peak_spacing_hz=0.2, numer_peaks=2, min_fr
     min_freq : float
         Minimum frequency to display
     """
-    epsilon = 1e-10
+    epsilon = 1e-100
     nakamura_all_windows = []
 
     # Frecuencia base
@@ -34,7 +34,7 @@ def plot_H_V_common_windows(builders, peak_spacing_hz=0.2, numer_peaks=2, min_fr
             h1 = mfs_X[:, i]
             h2 = mfs_Y[:, i]
             v  = mfs_Z[:, i]
-            nakamura = np.sqrt((h1**2 + h2**2) ) / (v + epsilon)
+            nakamura = (np.sqrt((h1**2 + h2**2)/2) ) / (v + epsilon)
             nakamura_all_windows.append(nakamura)
 
     nakamura_all_windows = np.column_stack(nakamura_all_windows)
@@ -45,3 +45,4 @@ def plot_H_V_common_windows(builders, peak_spacing_hz=0.2, numer_peaks=2, min_fr
                   peak_spacing_hz=peak_spacing_hz,
                   numer_peaks=numer_peaks,
                   min_freq=min_freq , xlim=xlim, ylim=ylim)
+    
