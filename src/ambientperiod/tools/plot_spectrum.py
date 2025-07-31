@@ -57,7 +57,11 @@ def plot_spectrum(mfx, mfs, mfp, peak_spacing_hz=0.5, numer_peaks=4,
     # Leyenda
     handles = [avg_line] + [l for l, _ in lines]
     labels = ['Average Spectrum'] + [txt for _, txt in lines]
-    plt.legend(handles, labels, loc='upper right', fontsize=9)
+    plt.legend(handles, labels, loc='upper left', fontsize=9)
+
+    # plt.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, -0.25),
+    #        ncol=2, fontsize=9, frameon=False)
+
 
     plt.tight_layout()
     plt.show()

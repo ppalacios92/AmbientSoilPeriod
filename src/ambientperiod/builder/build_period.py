@@ -132,8 +132,12 @@ class BuildPeriod:
     def compute_fft(self):
         fs = self.config["Fs"]
         apply_filter = self.config.get("apply_filter", "N")
-        f1 = self.config.get("f1", 0.1)
-        f2 = self.config.get("f2", 25.0)
+        # f1 = self.config.get("f1", 0.1)
+        # f2 = self.config.get("f2", 25.0)
+
+        f1 = self.config["f1"]
+        f2 = self.config["f2"]
+
 
         mfx, mfy, mfz = fft_vent(fs, self.windows_signal_tapered, apply_filter, f1, f2)
         self.mfx = mfx
@@ -191,7 +195,7 @@ class BuildPeriod:
     def plot_spectrum(self):
         self.mean_spectrum = prom_vent(self.mfs)
         peak_spacing_hz = 0.2
-        plot_spectrum(self.mfx, self.mfs, self.mean_spectrum, peak_spacing_hz=peak_spacing_hz)
+        plot_spectrum(self.mfx, self.mfs, self.mean_spectrum, peak_spacing_hz=peak_spacing_hz, numer_peaks=4, min_freq=self.config["f1"], xlim=None, ylim=None)
 
         print('prom_vent OK...')
 
