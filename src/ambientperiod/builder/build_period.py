@@ -64,7 +64,8 @@ class BuildPeriod:
         self.sua_vent()
         self.prom_vent()
 
-        self.plot_spectrum()
+        if self.config.get("plot_spectrum", True):
+            self.plot_spectrum()
         self.plot_peak_kde()                 
 
             
