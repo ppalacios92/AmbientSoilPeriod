@@ -38,7 +38,8 @@ def plot_H_V_common_windows(builders, peak_spacing_hz=0.2, numer_peaks=2, min_fr
             nakamura_all_windows.append(nakamura)
 
     nakamura_all_windows = np.column_stack(nakamura_all_windows)
-    nakamura_mean = np.mean(nakamura_all_windows, axis=1)
+    # H/V is log-normally distributed across windows (SESAME, 2004): geometric mean
+    nakamura_mean = np.exp(np.mean(np.log(nakamura_all_windows), axis=1))
 
     print("Plot Nakamura (H/V)")
     plot_spectrum(mfx, nakamura_all_windows, nakamura_mean,
