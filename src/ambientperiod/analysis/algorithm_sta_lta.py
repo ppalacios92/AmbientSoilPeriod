@@ -9,8 +9,9 @@ def algorithm_sta_lta(signal: np.ndarray, fs: float, sta_time: float, lta_time: 
     Nsta = int(fs * sta_time)
     Nlta = int(fs * lta_time)
 
-    # Relleno de borde usando el valor promedio como en MATLAB
-    edge_val = abs((signal[0] + signal[1]) / 2.0)
+    # Edge padding with the mean of the first two samples, as in MATLAB.
+    # The averages run on signal**2 (energy), so the pad must be squared too.
+    edge_val = ((signal[0] + signal[1]) / 2.0) ** 2
     signal2 = signal**2
 
     # Rellenar con valores de borde antes del inicio real
