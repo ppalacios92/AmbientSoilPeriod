@@ -1,14 +1,21 @@
 import numpy as np
 from scipy.signal import butter, filtfilt, detrend
 
-def fft_vent(fs, ma, apply_filter=False, f1=0.1, f2=25.0):
+def fft_vent(fs, ma, apply_filter=False, f1=0.1, f2=25.0, taper=None):
+    """Amplitude spectrum |X(f)| (unnormalized) of each window (column of `ma`).
+
+    Order per window: detrend -> optional band-pass -> mean removal -> taper -> FFT.
+    Pass the raw windows and the taper vector `taper` so detrending and filtering
+    do not undo the taper at the window edges. With `taper=None` the windows are
+    used as given.
+    """
     n_samples, n_windows = ma.shape
     # nfft = 2**15
     nfft=n_samples
     freqs = np.fft.fftfreq(nfft, d=1/fs)[:nfft // 2]
 
     MFX = np.tile(freqs[:, None], (1, n_windows))
-    MFY = np.zeros((nfft // 2, n_windows), dtype=np.complex64)
+    MFY = np.zeros((nfft // 2, n_windows), dtype=np.complex128)
     MFZ = np.zeros((nfft // 2, n_windows), dtype=np.float64)
 
     if apply_filter:
@@ -22,6 +29,8 @@ def fft_vent(fs, ma, apply_filter=False, f1=0.1, f2=25.0):
         if apply_filter:
             amp = filtfilt(b, a, amp)
         amp = amp - np.mean(amp)
+        if taper is not None:
+            amp = amp * taper
         spectrum = np.fft.fft(amp, n=nfft)[:nfft // 2]
         MFY[:, j] = spectrum
         MFZ[:, j] = np.abs(spectrum)
