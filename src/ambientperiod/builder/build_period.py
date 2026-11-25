@@ -132,7 +132,9 @@ class BuildPeriod:
 
     def compute_fft(self):
         fs = self.config["Fs"]
-        apply_filter = self.config.get("apply_filter", "N")
+        # band-pass f1-f2 on by default (the old default "N" was a truthy string,
+        # so filtering always ran); set "apply_filter": False to skip it
+        apply_filter = bool(self.config.get("apply_filter", True))
         # f1 = self.config.get("f1", 0.1)
         # f2 = self.config.get("f2", 25.0)
 
@@ -140,7 +142,9 @@ class BuildPeriod:
         f2 = self.config["f2"]
 
 
-        mfx, mfy, mfz = fft_vent(fs, self.windows_signal_tapered, apply_filter, f1, f2)
+        # raw windows + taper: fft_vent detrends and filters before tapering
+        mfx, mfy, mfz = fft_vent(fs, self.windows_signal, apply_filter, f1, f2,
+                                 taper=self.taper_window)
         self.mfx = mfx
         self.mfy = mfy
         self.mfz = mfz
