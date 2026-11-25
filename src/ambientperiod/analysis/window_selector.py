@@ -3,7 +3,7 @@ import numpy as np
 def window_selector(fs, T, V, R, vent, vmin, vmax):
 
     np_samples = int(fs * vent)
-    end_index = len(T) - 2 * np_samples + 1
+    end_index = len(T) - np_samples  # last start index of a full window
 
     MT = []
     MV = []
